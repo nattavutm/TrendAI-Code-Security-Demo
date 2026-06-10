@@ -3,12 +3,8 @@ name: TMAS Scan — Docker (Image Secrets + Malware Pattern Demo)
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'trendai-demo-docker/**'
   pull_request:
     branches: [ main ]
-    paths:
-      - 'trendai-demo-docker/**'
   workflow_dispatch:
 
 jobs:

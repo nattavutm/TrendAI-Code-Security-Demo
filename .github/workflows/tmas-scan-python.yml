@@ -3,12 +3,8 @@ name: TMAS Scan — Python (SQLi + RCE Demo)
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'trendai-demo-python/**'
   pull_request:
     branches: [ main ]
-    paths:
-      - 'trendai-demo-python/**'
   workflow_dispatch:
 
 jobs:

@@ -3,12 +3,8 @@ name: TMAS Scan — Java (Log4Shell Demo)
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'trendai-demo-java/**'
   pull_request:
     branches: [ main ]
-    paths:
-      - 'trendai-demo-java/**'
   workflow_dispatch:
 
 jobs:

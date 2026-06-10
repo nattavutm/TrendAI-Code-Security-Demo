@@ -3,12 +3,8 @@ name: TMAS Scan — Node.js (Deserialization + Prototype Pollution Demo)
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'trendai-demo-nodejs/**'
   pull_request:
     branches: [ main ]
-    paths:
-      - 'trendai-demo-nodejs/**'
   workflow_dispatch:
 
 jobs:
