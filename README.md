@@ -33,7 +33,7 @@ Each sub-project is a realistic but vulnerable app written by a "careless develo
 
 ---
 
-## How to Use (SE Demo Guide)
+## How to Use (Demo Guide)
 
 ### Step 1 — Connect this repo to Vision One Code Security
 1. In **Trend Vision One**, navigate to **Code Security → Repositories**
