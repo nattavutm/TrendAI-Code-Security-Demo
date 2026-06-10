@@ -1,0 +1,37 @@
+name: TMAS Region Test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  test-regions:
+    name: Test region ${{ matrix.region }}
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        region: [us-east-1, eu-central-1, eu-west-2, ca-central-1, ap-southeast-1, ap-southeast-2, ap-south-1, ap-northeast-1, me-central-1]
+      max-parallel: 1
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: TMAS Scan — Test region ${{ matrix.region }}
+        uses: trendmicro/tmas-scan-action@v3.1.3
+        with:
+          version: '2'
+          vulnerabilitiesScan: true
+          secretsScan: true
+          malwareScan: true
+          artifact: dir:trendai-demo-python
+          additionalArgs: --region=${{ matrix.region }}
+          tmasApiKey: ${{ secrets.TMAS_API_KEY }}
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Report region status
+        run: echo "Region ${{ matrix.region }} test completed"
