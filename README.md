@@ -207,7 +207,7 @@ This repository is for **demonstration and educational purposes only**.
 - All API keys, tokens, and credentials are **dummy values**
 - "Malware" patterns are **simulated** and non-functional
 - Vulnerable code is **intentional** for scanner testing
-- **Do not deploy any of these applications** to production environments
+- **Do not deploy any of these applications** to production environment
 
 ---
 
