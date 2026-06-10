@@ -31,7 +31,7 @@ jobs:
         run: mvn clean package -DskipTests --no-transfer-progress
 
       - name: TMAS Scan — vulnerabilities, secrets, malware
-        uses: trendmicro/tmas-scan-action@v3
+        uses: trendmicro/tmas-scan-action@v3.1.3
         with:
           version: '3'
           vulnerabilitiesScan: true
