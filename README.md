@@ -17,17 +17,6 @@ This repository demonstrates how TMAS detects security issues across multiple la
 
 ---
 
-## 📦 Demo Projects
-
-| Project | Language | Demonstrates |
-|---------|----------|--------------|
-| `trendai-demo-java/` | Java (Spring Boot) | CVE-2021-44228 Log4Shell, hardcoded AWS/JWT credentials |
-| `trendai-demo-python/` | Python (Flask) | SQL injection, Stripe key & Slack webhook leak |
-| `trendai-demo-nodejs/` | Node.js (Express) | Prototype pollution, insecure deserialization, GitHub PAT leak |
-| `trendai-demo-docker/` | Docker | Container layer secrets, malware behavior patterns (beacon, base64 payload) |
-
----
-
 ## 🚀 Quick Start
 
 ### Step 1 — Get Your API Key
