@@ -1,273 +1,105 @@
 # TrendAI Code Security Demo
 
-A demonstration repository with 4 intentionally vulnerable projects for testing **TrendAI Artifact Scanner (TMAS)** integration with GitHub Actions.
+Demo repository สำหรับทดสอบ **TrendAI Artifact Scanner (TMAS)** — สแกนหา CVEs, hardcoded secrets, และ malware patterns อัตโนมัติผ่าน GitHub Actions
 
-**All credentials in this repository are FAKE/DUMMY values for demonstration only.**
-
----
-
-## 📁 Projects
-
-| Project | Type | Purpose |
-|---------|------|---------|
-| `trendai-demo-java/` | Spring Boot | Demonstrates CVE detection (Log4Shell) |
-| `trendai-demo-python/` | Flask | Demonstrates secrets detection (API keys) |
-| `trendai-demo-nodejs/` | Express.js | Demonstrates package vulnerabilities |
-| `trendai-demo-docker/` | Docker container | Demonstrates image layer scanning |
+> **หมายเหตุ:** Credentials ทั้งหมดในโปรเจกต์นี้เป็น dummy values สำหรับ demo เท่านั้น
 
 ---
 
-## 📋 Prerequisites
+## โปรเจกต์ที่มีอยู่
 
-Before setting up and testing the TMAS scanning workflows, ensure you have:
-
-### 1. TrendMicro Vision One Account
-- [ ] Access to [TrendAI Vision One Console](https://portal.xdr.trendmicro.com/)
-- [ ] Permissions to create API keys
-
-### 2. TrendAI Vision One API Key
-- [ ] Valid API key with **"Run artifact scan"** permission
-- [ ] API key associated with your region (e.g., `us-east-1`, `ap-southeast-2`)
-
-**To obtain API key:**
-1. Log in to [TrendAI Vision One Console](https://portal.xdr.trendmicro.com/)
-2. Navigate to **User Roles** → Create/verify role with "Run artifact scan" permission
-3. Go to **API Keys** → Create new key with that role
-4. Record the API key and region
-
-### 3. GitHub Repository
-- [ ] Fork or clone this repository
-- [ ] Admin access to repository settings
-
-### 4. Local Tools (Optional for local testing)
-- [ ] Docker (for building container images)
-- [ ] TMAS CLI v2.252.0 (for manual scanning)
-- [ ] GitHub CLI (`gh`) for manual workflow triggering
+| โปรเจกต์ | ภาษา | จุดประสงค์ |
+|----------|------|------------|
+| `trendai-demo-java/` | Java (Spring Boot) | CVE-2021-44228 (Log4Shell) |
+| `trendai-demo-python/` | Python (Flask) | Hardcoded Stripe key, Slack webhook |
+| `trendai-demo-nodejs/` | Node.js (Express) | Prototype pollution, insecure deserialization |
+| `trendai-demo-docker/` | Docker | Container secrets, malware patterns |
 
 ---
 
-## 🔧 Step 1: Configure GitHub Secrets
+## วิธีทดสอบ
 
-Add your TrendMicro credentials as GitHub secrets so workflows can authenticate with TMAS API.
+### ขั้นตอนที่ 1 — เตรียม API Key
 
-### Via GitHub Web UI:
-
-1. Go to your repository
-2. **Settings** → **Secrets and variables** → **Actions**
-3. Click **New repository secret**
-
-**Add these secrets:**
-
-| Secret Name | Value | Example |
-|-------------|-------|---------|
-| `TMAS_API_KEY` | Your Vision One API key | `t1.abcd1234efgh5678...` |
-| `VISION_ONE_REGION` | Your region code | `us-east-1` |
-
-**Supported regions:**
-- `us-east-1` (default)
-- `eu-central-1`
-- `ap-southeast-2`
-- `ap-southeast-1`
-- `ap-northeast-1`
-- `ap-south-1`
-- `eu-west-2`
-- `ca-central-1`
-- `me-central-1`
+1. ล็อกอิน [TrendAI Vision One Console](https://portal.xdr.trendmicro.com/)
+2. ไปที่ **User Roles** → ตรวจสอบว่ามี permission **"Run artifact scan"**
+3. ไปที่ **API Keys** → สร้าง API key ใหม่
+4. จดบันทึก API key และ region ไว้
 
 ---
 
-## 🚀 Step 2: Run Workflows
+### ขั้นตอนที่ 2 — ตั้งค่า GitHub Secrets
 
-Workflows are automatically triggered on push to `main` branch. Or manually trigger them:
+1. ไปที่ repository → **Settings** → **Secrets and variables** → **Actions**
+2. กด **New repository secret** แล้วเพิ่ม 2 ค่า:
 
-### Option A: GitHub Web UI
-1. Go to **Actions** tab
-2. Select a workflow (e.g., "TMAS Scan — Java")
-3. Click **Run workflow**
-4. Wait for completion (~2-5 minutes)
-5. Check logs for TMAS scan output
+| Secret Name | ค่า |
+|-------------|-----|
+| `TMAS_API_KEY` | API key จากขั้นตอนที่ 1 |
+| `VISION_ONE_REGION` | Region เช่น `us-east-1` หรือ `ap-southeast-1` |
 
-### Option B: GitHub CLI
+---
+
+### ขั้นตอนที่ 3 — รัน Workflow
+
+**วิธีที่ 1: ผ่าน GitHub UI**
+1. ไปที่แท็บ **Actions**
+2. เลือก workflow ที่ต้องการ เช่น "TMAS Scan — Python"
+3. กด **Run workflow**
+
+**วิธีที่ 2: ผ่าน GitHub CLI**
 ```bash
-# Trigger individual workflows
-gh workflow run "tmas-scan-java.yml" -R <your-repo> --ref main
-gh workflow run "tmas-scan-python.yml" -R <your-repo> --ref main
-gh workflow run "tmas-scan-nodejs.yml" -R <your-repo> --ref main
-gh workflow run "tmas-scan-docker.yml" -R <your-repo> --ref main
-
-# Or trigger all at once
-gh workflow run "tmas-scan-java.yml" -R <your-repo> --ref main && \
-gh workflow run "tmas-scan-python.yml" -R <your-repo> --ref main && \
-gh workflow run "tmas-scan-nodejs.yml" -R <your-repo> --ref main && \
-gh workflow run "tmas-scan-docker.yml" -R <your-repo> --ref main
+gh workflow run "tmas-scan-java.yml" --ref main
+gh workflow run "tmas-scan-python.yml" --ref main
+gh workflow run "tmas-scan-nodejs.yml" --ref main
+gh workflow run "tmas-scan-docker.yml" --ref main
 ```
 
 ---
 
-## 📖 Step 3: View Results
+### ขั้นตอนที่ 4 — ดูผลลัพธ์
 
-### Check Workflow Logs
+1. ไปที่แท็บ **Actions** → เลือก workflow run ที่เพิ่งรัน
+2. คลิก job → ขยาย step **Run TMAS Scan**
+3. ดู JSON output:
 
-1. Go to **Actions** → Select workflow run
-2. Click **debug** job
-3. Expand **Run TMAS Scan** step
-4. View JSON output with findings
-
-**What to look for:**
-- `"vulnerabilities"` section → CVEs found
-- `"secrets"` section → Hardcoded credentials detected
-- `"malware"` section → Suspicious patterns (Docker image only)
-
-### Workflow Status
-
-All 4 workflows should show **✅ success**:
-- `tmas-scan-java.yml` — Directory scan (no malware)
-- `tmas-scan-python.yml` — Directory scan (no malware)
-- `tmas-scan-nodejs.yml` — Directory scan (no malware)
-- `tmas-scan-docker.yml` — 2 jobs: directory + image scan (with malware)
-
----
-
-## 🏃 Step 4: Local Testing (Optional)
-
-To test TMAS scanning locally without GitHub Actions:
-
-### Install TMAS CLI
-
-```bash
-# Download TMAS v2.252.0
-curl -L "https://ast-cli.xdr.trendmicro.com/tmas-cli/2.252.0/tmas-cli_Linux_x86_64.tar.gz" | tar xz
-
-# Or for macOS (Intel)
-curl -L "https://ast-cli.xdr.trendmicro.com/tmas-cli/latest/tmas-cli_Darwin_x86_64.zip" -o tmas.zip && unzip tmas.zip
-
-# Make executable
-chmod +x tmas
 ```
-
-### Set Environment Variables
-
-```bash
-# Set API key and region
-export TMAS_API_KEY="your-vision-one-api-key"
-export TMAS_REGION="us-east-1"  # or your region
-
-# Verify TMAS version
-./tmas --version
-```
-
-### Run Scans
-
-**Scan individual projects:**
-```bash
-# Scan Java project
-./tmas scan dir:trendai-demo-java \
-  --vulnerabilities --secrets \
-  --region $TMAS_REGION
-
-# Scan Python project
-./tmas scan dir:trendai-demo-python \
-  --vulnerabilities --secrets \
-  --region $TMAS_REGION
-
-# Scan Node.js project
-./tmas scan dir:trendai-demo-nodejs \
-  --vulnerabilities --secrets \
-  --region $TMAS_REGION
-
-# Scan Docker source files
-./tmas scan dir:trendai-demo-docker \
-  --vulnerabilities --secrets \
-  --region $TMAS_REGION
-```
-
-**Scan Docker image:**
-```bash
-# Build Docker image
-docker build -t trendai-demo-docker:latest ./trendai-demo-docker
-
-# Scan image with malware detection
-./tmas scan docker:trendai-demo-docker:latest \
-  --vulnerabilities --malware --secrets \
-  --region $TMAS_REGION
+"vulnerabilities" → CVEs ที่เจอ
+"secrets"         → Credentials ที่หลุดอยู่ในโค้ด
+"malware"         → Suspicious patterns (เฉพาะ Docker image)
 ```
 
 ---
 
-## ⚙️ Workflow Files
+## การทำงานภายใน
 
-### What's in `.github/workflows/`
-
-| File | Purpose |
-|------|---------|
-| `tmas-scan-java.yml` | Scans `trendai-demo-java/` for CVEs and secrets |
-| `tmas-scan-python.yml` | Scans `trendai-demo-python/` for CVEs and secrets |
-| `tmas-scan-nodejs.yml` | Scans `trendai-demo-nodejs/` for CVEs and secrets |
-| `tmas-scan-docker.yml` | Scans Docker source + builds and scans image |
-
-### Workflow Structure
-
-Each workflow:
-1. Checks out repository
-2. Downloads TMAS CLI v2.252.0
-3. Creates `~/.tmas/.env` with API credentials
-4. Runs TMAS scan with appropriate flags
-5. Reports results (success/failure)
+```
+push to main
+     │
+     ▼
+GitHub Actions trigger
+     │
+     ├── ดาวน์โหลด TMAS CLI
+     ├── สร้าง ~/.tmas/.env (ใส่ API key + region)
+     └── รัน tmas scan
+              │
+              ├── dir:  → สแกน vulnerabilities + secrets
+              └── docker: → สแกน vulnerabilities + secrets + malware
+```
 
 ---
 
-## 🔍 Troubleshooting
+## Troubleshooting
 
-### Error: "403 Forbidden"
-**Cause:** Invalid or mismatched API key/region
-- [ ] Verify `TMAS_API_KEY` is correct
-- [ ] Verify `VISION_ONE_REGION` matches your API key's region
-- [ ] Check API key has "Run artifact scan" permission
-
-### Error: "Unknown artifact type"
-**Cause:** Incorrect artifact format in scan command
-- [ ] Use `dir:path` for directory scanning
-- [ ] Use `docker:image:tag` for container image scanning
-- [ ] Never use `artifact:` keyword
-
-### Error: "Malware scanning not supported"
-**Cause:** Using `--malware` flag on directory artifact
-- [ ] Remove `--malware` for `dir:` scans
-- [ ] Only use `--malware` with `docker:`, `registry:`, or image artifacts
-
-### Workflow timeout
-**Cause:** Large artifacts or slow network
-- [ ] Java builds can take 2-3 minutes
-- [ ] Docker image scanning can take 3-5 minutes
-- [ ] Check logs for progress
+| Error | สาเหตุ | วิธีแก้ |
+|-------|--------|---------|
+| `403 Forbidden` | API key ผิด หรือ region ไม่ตรง | ตรวจสอบ `TMAS_API_KEY` และ `VISION_ONE_REGION` |
+| `Unknown artifact type` | format ผิด | ใช้ `dir:path` หรือ `docker:image:tag` |
+| `Malware not supported` | ใช้ `--malware` กับ directory | เอา `--malware` ออก ใช้กับ docker image เท่านั้น |
 
 ---
 
-## 📝 Next Steps
+## Resources
 
-1. **Setup secrets** (TMAS_API_KEY, VISION_ONE_REGION)
-2. **Push to main branch** or manually trigger workflows
-3. **Check GitHub Actions** for results
-4. **Review scan findings** in workflow logs
-5. **Customize** projects for your demo scenario
-
----
-
-## 🔗 Resources
-
-- [TrendMicro TMAS Documentation](https://docs.trendmicro.com/en-us/documentation/article/trend-vision-one-tmas-about)
-- [TrendAI Vision One Console](https://portal.xdr.trendmicro.com/)
-- [GitHub Actions Documentation](https://docs.github.com/en/actions)
-
----
-
-## ⚠️ Important Notes
-
-- **All credentials are dummy values** — safe for public repository
-- **Workflows require valid TMAS API key** to run
-- **Docker image scanning** requires Docker to be available (GitHub-hosted runner has Docker)
-- **Malware scanning** only works on container images, not directories
-
----
-
-**Ready to test? Start with Step 1: Configure GitHub Secrets** ✅
+- [TMAS Documentation](https://docs.trendmicro.com/en-us/documentation/article/trend-vision-one-tmas-about)
+- [Vision One Console](https://portal.xdr.trendmicro.com/)
