@@ -1,23 +1,36 @@
-name: TMAS Security Scan
+name: TMAS Scan — Java (Log4Shell Demo)
 
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'trendai-demo-java/**'
   pull_request:
     branches: [ main ]
+    paths:
+      - 'trendai-demo-java/**'
+  workflow_dispatch:
 
 jobs:
   build-and-scan:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: trendai-demo-java
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Build Docker image
-        run: |
-          docker build -t trendai-demo-docker:${{ github.sha }} .
-          docker save trendai-demo-docker:${{ github.sha }} -o image.tar
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn clean package -DskipTests --no-transfer-progress
 
       - name: Install TMAS CLI
         run: |
@@ -26,13 +39,15 @@ jobs:
           sudo mv tmas /usr/local/bin/
           tmas version
 
-      - name: Run TMAS scan on Docker image
+      - name: Run TMAS scan on JAR artifact
         id: tmas-scan
         env:
           TMAS_API_KEY: ${{ secrets.TMAS_API_KEY }}
           VISION_ONE_REGION: ${{ secrets.VISION_ONE_REGION }}
         run: |
-          tmas scan image "trendai-demo-docker:${{ github.sha }}" \
+          JAR_FILE=$(ls target/*.jar | grep -v original | head -1)
+          echo "Scanning artifact: $JAR_FILE"
+          tmas scan artifact "$JAR_FILE" \
             --api-key "$TMAS_API_KEY" \
             --region "$VISION_ONE_REGION" \
             --output-file tmas-report.json
@@ -42,8 +57,8 @@ jobs:
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: tmas-scan-report-${{ github.run_number }}
-          path: tmas-report.json
+          name: tmas-report-java-${{ github.run_number }}
+          path: trendai-demo-java/tmas-report.json
           if-no-files-found: warn
           retention-days: 30
 

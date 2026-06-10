@@ -1,14 +1,22 @@
-name: TMAS Security Scan
+name: TMAS Scan — Python (SQLi + RCE Demo)
 
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'trendai-demo-python/**'
   pull_request:
     branches: [ main ]
+    paths:
+      - 'trendai-demo-python/**'
+  workflow_dispatch:
 
 jobs:
   scan:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: trendai-demo-python
 
     steps:
       - name: Checkout repository
@@ -52,8 +60,8 @@ jobs:
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: tmas-scan-report-${{ github.run_number }}
-          path: tmas-report.json
+          name: tmas-report-python-${{ github.run_number }}
+          path: trendai-demo-python/tmas-report.json
           if-no-files-found: warn
           retention-days: 30
 

@@ -1,27 +1,28 @@
-name: TMAS Security Scan
+name: TMAS Scan — Docker (Image Secrets + Malware Pattern Demo)
 
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'trendai-demo-docker/**'
   pull_request:
     branches: [ main ]
+    paths:
+      - 'trendai-demo-docker/**'
+  workflow_dispatch:
 
 jobs:
-  scan:
+  build-and-scan:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js 16
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci --prefer-offline || npm install
+      - name: Build Docker image
+        working-directory: trendai-demo-docker
+        run: |
+          docker build -t trendai-demo-docker:${{ github.sha }} .
 
       - name: Install TMAS CLI
         run: |
@@ -30,20 +31,13 @@ jobs:
           sudo mv tmas /usr/local/bin/
           tmas version
 
-      - name: Bundle application for scanning
-        run: |
-          zip -r app-bundle.zip . \
-            --exclude "*.git*" \
-            --exclude ".github/*" \
-            --exclude "*.test.js"
-
-      - name: Run TMAS scan
+      - name: Run TMAS scan on Docker image
         id: tmas-scan
         env:
           TMAS_API_KEY: ${{ secrets.TMAS_API_KEY }}
           VISION_ONE_REGION: ${{ secrets.VISION_ONE_REGION }}
         run: |
-          tmas scan artifact app-bundle.zip \
+          tmas scan image "trendai-demo-docker:${{ github.sha }}" \
             --api-key "$TMAS_API_KEY" \
             --region "$VISION_ONE_REGION" \
             --output-file tmas-report.json
@@ -53,7 +47,7 @@ jobs:
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: tmas-scan-report-${{ github.run_number }}
+          name: tmas-report-docker-${{ github.run_number }}
           path: tmas-report.json
           if-no-files-found: warn
           retention-days: 30
