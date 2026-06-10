@@ -7,64 +7,26 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   scan:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: trendai-demo-python
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install TMAS CLI
-        env:
-          TMAS_DOWNLOAD_URL: ${{ secrets.TMAS_DOWNLOAD_URL }}
-        run: |
-          curl -L "$TMAS_DOWNLOAD_URL" | tar xz
-          sudo mv tmas /usr/local/bin/
-          tmas version
-
-      - name: Bundle application for scanning
-        run: |
-          zip -r app-bundle.zip . \
-            --exclude "*.git*" \
-            --exclude "__pycache__/*" \
-            --exclude "*.pyc"
-
-      - name: Run TMAS scan
-        id: tmas-scan
-        env:
-          TMAS_API_KEY: ${{ secrets.TMAS_API_KEY }}
-          VISION_ONE_REGION: ${{ secrets.VISION_ONE_REGION }}
-        run: |
-          tmas scan artifact app-bundle.zip \
-            --api-key "$TMAS_API_KEY" \
-            --region "$VISION_ONE_REGION" \
-            --output-file tmas-report.json
-        continue-on-error: true
-
-      - name: Upload TMAS scan report
-        uses: actions/upload-artifact@v4
-        if: always()
+      - name: TMAS Scan — vulnerabilities, secrets, malware
+        uses: trendmicro/tmas-scan-action@v3
         with:
-          name: tmas-report-python-${{ github.run_number }}
-          path: trendai-demo-python/tmas-report.json
-          if-no-files-found: warn
-          retention-days: 30
-
-      - name: Fail pipeline on critical findings
-        run: |
-          if [ ! -f tmas-report.json ]; then
-            echo "WARNING: Scan report not found — skipping gate check"
-            exit 0
-          fi
-          CRITICAL=$(jq '[.findings[] | select(.severity == "CRITICAL")] | length' tmas-report.json 2>/dev/null || echo "0")
-          HIGH=$(jq '[.findings[] | select(.severity == "HIGH")] | length' tmas-report.json 2>/dev/null || echo "0")
-          echo "Findings — Critical: $CRITICAL | High: $HIGH"
-          if [ "$CRITICAL" -gt "0" ]; then
-            echo "PIPELINE BLOCKED: $CRITICAL critical severity vulnerability(s) detected."
-            exit 1
-          fi
-          echo "No critical findings. Pipeline passed."
+          version: '3'
+          vulnerabilitiesScan: true
+          secretsScan: true
+          malwareScan: true
+          artifact: dir:trendai-demo-python
+          additionalArgs: --region=${{ secrets.VISION_ONE_REGION }}
+          tmasApiKey: ${{ secrets.TMAS_API_KEY }}
+          githubToken: ${{ secrets.GITHUB_TOKEN }}

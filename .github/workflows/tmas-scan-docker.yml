@@ -7,9 +7,34 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
-  build-and-scan:
-    runs-on: ubuntu-latest
+  scan-source:
+    name: Scan source (secrets + malware)
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: TMAS Scan — secrets and malware in source
+        uses: trendmicro/tmas-scan-action@v3
+        with:
+          version: '3'
+          vulnerabilitiesScan: true
+          secretsScan: true
+          malwareScan: true
+          artifact: dir:trendai-demo-docker
+          additionalArgs: --region=${{ secrets.VISION_ONE_REGION }}
+          tmasApiKey: ${{ secrets.TMAS_API_KEY }}
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+
+  scan-image:
+    name: Scan Docker image (OS CVEs + baked secrets)
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout repository
@@ -17,49 +42,16 @@ jobs:
 
       - name: Build Docker image
         working-directory: trendai-demo-docker
-        run: |
-          docker build -t trendai-demo-docker:${{ github.sha }} .
+        run: docker build -t trendai-demo-docker:${{ github.sha }} .
 
-      - name: Install TMAS CLI
-        env:
-          TMAS_DOWNLOAD_URL: ${{ secrets.TMAS_DOWNLOAD_URL }}
-        run: |
-          curl -L "$TMAS_DOWNLOAD_URL" | tar xz
-          sudo mv tmas /usr/local/bin/
-          tmas version
-
-      - name: Run TMAS scan on Docker image
-        id: tmas-scan
-        env:
-          TMAS_API_KEY: ${{ secrets.TMAS_API_KEY }}
-          VISION_ONE_REGION: ${{ secrets.VISION_ONE_REGION }}
-        run: |
-          tmas scan image "trendai-demo-docker:${{ github.sha }}" \
-            --api-key "$TMAS_API_KEY" \
-            --region "$VISION_ONE_REGION" \
-            --output-file tmas-report.json
-        continue-on-error: true
-
-      - name: Upload TMAS scan report
-        uses: actions/upload-artifact@v4
-        if: always()
+      - name: TMAS Scan — container image
+        uses: trendmicro/tmas-scan-action@v3
         with:
-          name: tmas-report-docker-${{ github.run_number }}
-          path: tmas-report.json
-          if-no-files-found: warn
-          retention-days: 30
-
-      - name: Fail pipeline on critical findings
-        run: |
-          if [ ! -f tmas-report.json ]; then
-            echo "WARNING: Scan report not found — skipping gate check"
-            exit 0
-          fi
-          CRITICAL=$(jq '[.findings[] | select(.severity == "CRITICAL")] | length' tmas-report.json 2>/dev/null || echo "0")
-          HIGH=$(jq '[.findings[] | select(.severity == "HIGH")] | length' tmas-report.json 2>/dev/null || echo "0")
-          echo "Findings — Critical: $CRITICAL | High: $HIGH"
-          if [ "$CRITICAL" -gt "0" ]; then
-            echo "PIPELINE BLOCKED: $CRITICAL critical severity vulnerability(s) detected."
-            exit 1
-          fi
-          echo "No critical findings. Pipeline passed."
+          version: '3'
+          vulnerabilitiesScan: true
+          secretsScan: true
+          malwareScan: true
+          artifact: image:trendai-demo-docker:${{ github.sha }}
+          additionalArgs: --region=${{ secrets.VISION_ONE_REGION }}
+          tmasApiKey: ${{ secrets.TMAS_API_KEY }}
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
