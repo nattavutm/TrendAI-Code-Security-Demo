@@ -26,6 +26,6 @@ jobs:
           TMAS_API_KEY: ${{ secrets.TMAS_API_KEY }}
           TMAS_REGION: ${{ secrets.VISION_ONE_REGION }}
         run: |
-          tmas scan artifact dir:trendai-demo-nodejs \
+          tmas scan artifact trendai-demo-nodejs \
             --vulnerabilities --malware --secrets \
             --region "$TMAS_REGION"
