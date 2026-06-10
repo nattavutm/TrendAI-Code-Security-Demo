@@ -22,7 +22,7 @@ jobs:
       - name: TMAS Scan — vulnerabilities, secrets, malware
         uses: trendmicro/tmas-scan-action@v3.1.3
         with:
-          version: '3'
+          version: '2'
           vulnerabilitiesScan: true
           secretsScan: true
           malwareScan: true
