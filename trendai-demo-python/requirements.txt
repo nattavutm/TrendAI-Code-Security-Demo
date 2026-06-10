@@ -1,9 +1,88 @@
-# TODO: upgrade all packages - pinned versions are from initial dev environment
+# TODO: upgrade all packages — pinned versions are from initial dev environment (2018)
+# Many of these have known CVEs
+
+# === Web framework (multiple CVEs) ===
 Flask==0.12.2
 Werkzeug==0.14.1
-Pillow==5.0.0
-requests==2.18.4
-itsdangerous==0.24
 Jinja2==2.10
+itsdangerous==0.24
 MarkupSafe==1.0
 click==6.7
+
+# === Django (old version with many CVEs) ===
+Django==2.0.0
+djangorestframework==3.7.0
+
+# === Image processing (Pillow has many CVEs) ===
+Pillow==5.0.0
+
+# === HTTP & networking (CVEs) ===
+requests==2.18.4
+urllib3==1.21.1
+httplib2==0.9.2
+
+# === Parsing (YAML deserialization CVE) ===
+PyYAML==3.13
+lxml==4.0.0
+defusedxml==0.5.0
+
+# === Cryptography (old versions with CVEs) ===
+cryptography==2.1.4
+pyOpenSSL==17.5.0
+paramiko==2.0.0
+pycryptodome==3.4.0
+
+# === Database libraries ===
+SQLAlchemy==1.0.0
+psycopg2==2.7.0
+PyMySQL==0.7.0
+redis==2.10.0
+pymongo==3.5.0
+
+# === Data science (older CVEs) ===
+numpy==1.16.0
+pandas==0.23.4
+scipy==1.0.0
+
+# === Auth / JWT ===
+PyJWT==1.5.0
+python-jose==3.0.0
+oauthlib==2.0.0
+requests-oauthlib==0.8.0
+
+# === Task queue ===
+celery==4.0.0
+kombu==4.0.0
+amqp==2.1.0
+
+# === Web scraping (older CVEs) ===
+beautifulsoup4==4.6.0
+mechanize==0.3.0
+
+# === Template / sanitization ===
+bleach==3.0.0
+markdown==2.6.0
+
+# === AWS SDK (old) ===
+boto==2.10.0
+boto3==1.4.0
+botocore==1.5.0
+
+# === Twisted / async ===
+Twisted==15.5.0
+gevent==1.2.0
+
+# === Testing (old versions) ===
+nose==1.3.0
+mock==2.0.0
+
+# === Misc utilities ===
+ipython==5.0.0
+notebook==5.0.0
+tornado==4.5.0
+salt==2018.3.0
+ansible==2.5.0
+
+# === Build / packaging (CVEs in setuptools) ===
+setuptools==40.0.0
+pip==9.0.1
