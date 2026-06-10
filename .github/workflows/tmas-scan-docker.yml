@@ -27,8 +27,11 @@ jobs:
           TMAS_API_KEY: ${{ secrets.TMAS_API_KEY }}
           TMAS_REGION: ${{ secrets.VISION_ONE_REGION }}
         run: |
-          tmas scan artifact trendai-demo-docker \
-            --vulnerabilities --malware --secrets \
+          mkdir -p ~/.tmas
+          echo "TMAS_API_KEY=$TMAS_API_KEY" > ~/.tmas/.env
+          echo "TMAS_REGION=$TMAS_REGION" >> ~/.tmas/.env
+          tmas scan dir:trendai-demo-docker \
+            --vulnerabilities --secrets \
             --region "$TMAS_REGION"
 
   scan-image:
@@ -54,6 +57,9 @@ jobs:
           TMAS_API_KEY: ${{ secrets.TMAS_API_KEY }}
           TMAS_REGION: ${{ secrets.VISION_ONE_REGION }}
         run: |
-          tmas scan artifact trendai-demo-docker:${{ github.sha }} \
+          mkdir -p ~/.tmas
+          echo "TMAS_API_KEY=$TMAS_API_KEY" > ~/.tmas/.env
+          echo "TMAS_REGION=$TMAS_REGION" >> ~/.tmas/.env
+          tmas scan docker:trendai-demo-docker:${{ github.sha }} \
             --vulnerabilities --malware --secrets \
             --region "$TMAS_REGION"
