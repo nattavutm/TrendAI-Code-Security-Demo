@@ -22,8 +22,11 @@ jobs:
 
       - name: Install TMAS CLI
         run: |
-          curl -L "https://github.com/trendmicro/tmas/releases/latest/download/tmas_Linux_x86_64.tar.gz" \
-            | tar xz
+          TMAS_URL=$(curl -s https://api.github.com/repos/trendmicro/tmas/releases/latest \
+            | jq -r '.assets[] | select(.name | ascii_downcase | test("linux.*x86_64|linux.*amd64")) | .browser_download_url' \
+            | head -1)
+          echo "Downloading TMAS from: $TMAS_URL"
+          curl -L "$TMAS_URL" | tar xz
           sudo mv tmas /usr/local/bin/
           tmas version
 
