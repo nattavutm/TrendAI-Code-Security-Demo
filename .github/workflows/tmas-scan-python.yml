@@ -18,14 +18,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.9'
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
       - name: Install TMAS CLI
         run: |
           curl -L "https://github.com/trendmicro/tmas/releases/latest/download/tmas_Linux_x86_64.tar.gz" \
