@@ -28,6 +28,7 @@ jobs:
           TMAS_REGION: ${{ secrets.VISION_ONE_REGION }}
         run: |
           tmas scan artifact dir:trendai-demo-docker \
+            --vulnerabilities --malware --secrets \
             --region "$TMAS_REGION"
 
   scan-image:
@@ -54,4 +55,5 @@ jobs:
           TMAS_REGION: ${{ secrets.VISION_ONE_REGION }}
         run: |
           tmas scan artifact image:trendai-demo-docker:${{ github.sha }} \
+            --vulnerabilities --malware --secrets \
             --region "$TMAS_REGION"
