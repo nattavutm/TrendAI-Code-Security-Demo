@@ -38,5 +38,4 @@ jobs:
           TMAS_REGION: ${{ secrets.VISION_ONE_REGION }}
         run: |
           tmas scan artifact dir:trendai-demo-java \
-            --api-key "$TMAS_API_KEY" \
             --region "$TMAS_REGION"
