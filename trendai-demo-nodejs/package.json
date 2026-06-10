@@ -1,0 +1,24 @@
+{
+  "name": "trendai-demo-nodejs",
+  "version": "1.0.0",
+  "description": "Simple user profile and activity service",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "jest --forceExit"
+  },
+  "dependencies": {
+    "body-parser": "1.18.3",
+    "express": "4.16.4",
+    "lodash": "4.17.15",
+    "moment": "2.24.0",
+    "mongoose": "5.4.20",
+    "node-serialize": "0.0.4"
+  },
+  "devDependencies": {
+    "jest": "24.0.0",
+    "nodemon": "1.18.10",
+    "supertest": "3.4.2"
+  }
+}
