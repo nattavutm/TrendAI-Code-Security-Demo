@@ -202,19 +202,6 @@ All workflows live in `.github/workflows/`:
 
 ---
 
-## 🎬 Suggested Demo Flow (for SE/Sales)
-
-1. **Show the codebase** — Open `trendai-demo-python/config.py` and highlight visible hardcoded secrets
-2. **Push or trigger the workflow** — Demonstrate automated CI/CD integration
-3. **Open Actions tab** — Show workflow running in real-time
-4. **Expand scan output** — Walk through detected CVEs and secrets
-5. **Open Vision One Console** — Show findings centralized across projects
-6. **Discuss remediation** — Show fixed versions, suggest override files for false positives
-
-**Recommended demo duration:** ~15 minutes
-
----
-
 ## 📚 Resources
 
 - 📖 [TMAS Official Documentation](https://docs.trendmicro.com/en-us/documentation/article/trend-vision-one-tmas-about)
