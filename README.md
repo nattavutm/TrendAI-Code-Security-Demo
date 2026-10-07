@@ -211,4 +211,3 @@ This repository is for **demonstration and educational purposes only**.
 
 ---
 
-**Ready to start? → Jump to [Step 1: Get Your API Key](#step-1--get-your-api-key)** 🚀
