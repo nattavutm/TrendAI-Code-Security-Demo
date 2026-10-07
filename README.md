@@ -1,4 +1,4 @@
-# TrendAI Code Security Demo
+# TrendAI Code Security 
 
 A hands-on demo repository for testing **TrendAI Artifact Scanner (TMAS)** — automatically scans 4 intentionally vulnerable projects for CVEs, hardcoded secrets, and malware patterns via GitHub Actions.
 
